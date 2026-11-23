@@ -1,22 +1,35 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 export default function Page() {
-  const posts = [
-    { id: 1, title: "제목 1" },
-    { id: 2, title: "제목 2" },
-  ];
+  const [posts, setPosts] = useState<{ id: number; title: string }[] | null>(
+    null,
+  );
+
+  useEffect(() => {
+    fetch("http://localhost:8080/api/v1/posts")
+      .then((res) => res.json())
+      .then(setPosts);
+  }, []);
+
+  if (posts == null) return <div>로딩중...</div>;
 
   return (
     <>
       <h1>글 목록</h1>
 
-      <ul>
-        {posts.map((post) => (
-          <li key={post.id}>
-            {post.id} : {post.title}
-          </li>
-        ))}
-      </ul>
+      {posts.length == 0 && <div>글이 없습니다.</div>}
+
+      {posts.length > 0 && (
+        <ul>
+          {posts.map((post) => (
+            <li key={post.id}>
+              {post.id} : {post.title}
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   );
 }
