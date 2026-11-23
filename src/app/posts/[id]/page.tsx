@@ -34,7 +34,13 @@ export default function Page() {
     apiFetch(`/api/v1/posts/${id}/comments/${commentId}`, {
       method: "DELETE",
     })
-      .then((data) => alert(data.msg))
+      .then((data) => {
+        alert(data.msg);
+
+        setPostComments(
+          (prev) => prev?.filter((comment) => comment.id != commentId) ?? null,
+        );
+      })
       .catch((error) => alert(error.msg ?? "댓글 삭제에 실패했습니다."));
   };
 
