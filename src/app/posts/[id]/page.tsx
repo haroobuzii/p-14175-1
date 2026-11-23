@@ -65,6 +65,15 @@ export default function Page() {
       contentTextarea.focus();
       return;
     }
+
+    apiFetch(`/api/v1/posts/${id}/comments`, {
+      method: "POST",
+      body: JSON.stringify({
+        content: contentTextarea.value,
+      }),
+    })
+      .then((data) => alert(data.msg))
+      .catch((error) => alert(error.msg ?? "댓글 작성에 실패했습니다."));
   };
 
   if (post == null) return <div>로딩중...</div>;
