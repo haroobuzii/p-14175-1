@@ -72,7 +72,12 @@ export default function Page() {
         content: contentTextarea.value,
       }),
     })
-      .then((data) => alert(data.msg))
+      .then((data) => {
+        alert(data.msg);
+
+        contentTextarea.value = "";
+        setPostComments((prev) => (prev == null ? prev : [...prev, data.data]));
+      })
       .catch((error) => alert(error.msg ?? "댓글 작성에 실패했습니다."));
   };
 
