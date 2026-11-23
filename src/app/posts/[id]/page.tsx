@@ -14,6 +14,12 @@ export default function Page() {
     apiFetch(`/api/v1/posts/${id}`).then(setPost);
   }, [id]);
 
+  const deletePost = (id: number) => {
+    apiFetch(`/api/v1/posts/${id}`, {
+      method: "DELETE",
+    });
+  };
+
   if (post == null) return <div>로딩중...</div>;
 
   return (
@@ -26,8 +32,16 @@ export default function Page() {
       <div>제목 : {post.title}</div>
       <div style={{ whiteSpace: "pre-line" }}>{post.content}</div>
 
-      <div>
-        <Link href="/posts">목록</Link>
+      <div className="flex gap-2">
+        <button
+          className="p-2 rounded border"
+          onClick={() => confirm(`${post.id}번 글을 정말로 삭제하시겠습니까?`) && deletePost(post.id)}
+        >
+          삭제
+        </button>
+        <Link href="/posts" className="p-2 rounded border">
+          목록
+        </Link>
       </div>
     </>
   );
