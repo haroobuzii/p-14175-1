@@ -48,6 +48,9 @@ export default function Page() {
         >
           삭제
         </button>
+        <Link href={`/posts/${post.id}/edit`} className="p-2 rounded border">
+          수정
+        </Link>
         <Link href="/posts" className="p-2 rounded border">
           목록
         </Link>
