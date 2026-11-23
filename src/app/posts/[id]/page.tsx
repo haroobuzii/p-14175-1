@@ -3,10 +3,11 @@
 import { apiFetch } from "@/lib/backend/client";
 import type { PostWithContentDto } from "@/type/post";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Page() {
+  const router = useRouter();
   const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<PostWithContentDto | null>(null);
 
@@ -17,7 +18,12 @@ export default function Page() {
   const deletePost = (id: number) => {
     apiFetch(`/api/v1/posts/${id}`, {
       method: "DELETE",
-    });
+    })
+      .then((data) => {
+        alert(data.msg);
+        router.replace("/posts");
+      })
+      .catch((error) => alert(error.msg ?? "글 삭제에 실패했습니다."));
   };
 
   if (post == null) return <div>로딩중...</div>;
@@ -35,7 +41,10 @@ export default function Page() {
       <div className="flex gap-2">
         <button
           className="p-2 rounded border"
-          onClick={() => confirm(`${post.id}번 글을 정말로 삭제하시겠습니까?`) && deletePost(post.id)}
+          onClick={() =>
+            confirm(`${post.id}번 글을 정말로 삭제하시겠습니까?`) &&
+            deletePost(post.id)
+          }
         >
           삭제
         </button>
