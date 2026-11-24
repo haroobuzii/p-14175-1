@@ -125,24 +125,14 @@ function PostInfo({
   );
 }
 
-function PostCommentWriteAndList({
+function PostCommentWrite({
   id,
   postCommentsState,
 }: {
   id: number;
   postCommentsState: ReturnType<typeof usePostComments>;
 }) {
-  const {
-    postComments,
-    deleteComment: _deleteComment,
-    writeComment,
-  } = postCommentsState;
-
-  const deleteComment = (commentId: number) => {
-    if (!confirm(`${commentId}번 댓글을 정말로 삭제하시겠습니까?`)) return;
-
-    _deleteComment(id, commentId, (data) => alert(data.msg));
-  };
+  const { writeComment } = postCommentsState;
 
   const handleCommentWriteSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -191,6 +181,28 @@ function PostCommentWriteAndList({
           작성
         </button>
       </form>
+    </>
+  );
+}
+
+function PostCommentWriteAndList({
+  id,
+  postCommentsState,
+}: {
+  id: number;
+  postCommentsState: ReturnType<typeof usePostComments>;
+}) {
+  const { postComments, deleteComment: _deleteComment } = postCommentsState;
+
+  const deleteComment = (commentId: number) => {
+    if (!confirm(`${commentId}번 댓글을 정말로 삭제하시겠습니까?`)) return;
+
+    _deleteComment(id, commentId, (data) => alert(data.msg));
+  };
+
+  return (
+    <>
+      <PostCommentWrite id={id} postCommentsState={postCommentsState} />
 
       <h2>댓글 목록</h2>
 
