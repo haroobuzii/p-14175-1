@@ -72,6 +72,7 @@ function usePostComments(id: number) {
   };
 
   return {
+    id,
     postComments,
     deleteComment,
     writeComment,
@@ -121,13 +122,11 @@ function PostInfo({
 }
 
 function PostCommentWrite({
-  id,
   postCommentsState,
 }: {
-  id: number;
   postCommentsState: ReturnType<typeof usePostComments>;
 }) {
-  const { writeComment } = postCommentsState;
+  const { id, writeComment } = postCommentsState;
 
   const handleCommentWriteSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -159,7 +158,7 @@ function PostCommentWrite({
 
   return (
     <>
-      <h2>댓글 작성</h2>
+      <h2>{id}번 글에 대한 댓글 작성</h2>
 
       <form
         className="flex flex-col gap-2 p-2"
@@ -181,13 +180,15 @@ function PostCommentWrite({
 }
 
 function PostCommentList({
-  id,
   postCommentsState,
 }: {
-  id: number;
   postCommentsState: ReturnType<typeof usePostComments>;
 }) {
-  const { postComments, deleteComment: _deleteComment } = postCommentsState;
+  const {
+    id,
+    postComments,
+    deleteComment: _deleteComment,
+  } = postCommentsState;
 
   const deleteComment = (commentId: number) => {
     if (!confirm(`${commentId}번 댓글을 정말로 삭제하시겠습니까?`)) return;
@@ -197,7 +198,7 @@ function PostCommentList({
 
   return (
     <>
-      <h2>댓글 목록</h2>
+      <h2>{id}번 글에 대한 댓글 목록</h2>
 
       {postComments == null && <div>댓글 로딩중...</div>}
 
@@ -227,19 +228,17 @@ function PostCommentList({
 }
 
 function PostCommentWriteAndList({
-  id,
   postCommentsState,
 }: {
-  id: number;
   postCommentsState: ReturnType<typeof usePostComments>;
 }) {
   return (
     <>
-      <PostCommentWrite id={id} postCommentsState={postCommentsState} />
+      <PostCommentWrite postCommentsState={postCommentsState} />
 
       <hr className="my-2" />
 
-      <PostCommentList id={id} postCommentsState={postCommentsState} />
+      <PostCommentList postCommentsState={postCommentsState} />
     </>
   );
 }
@@ -258,7 +257,7 @@ export default function Page() {
 
       <hr className="my-2" />
 
-      <PostCommentWriteAndList id={id} postCommentsState={postCommentsState} />
+      <PostCommentWriteAndList postCommentsState={postCommentsState} />
     </>
   );
 }
