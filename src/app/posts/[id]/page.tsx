@@ -13,8 +13,20 @@ function usePost(id: string) {
     apiFetch(`/api/v1/posts/${id}`).then(setPost);
   }, [id]);
 
+  const deletePost = (
+    id: number,
+    onSuccess: (data: { msg: string }) => void,
+  ) => {
+    apiFetch(`/api/v1/posts/${id}`, {
+      method: "DELETE",
+    })
+      .then(onSuccess)
+      .catch((error) => alert(error.msg ?? "글 삭제에 실패했습니다."));
+  };
+
   return {
     post,
+    deletePost,
   };
 }
 
@@ -137,8 +149,13 @@ function PostInfo({
   deletePost,
 }: {
   post: PostWithContentDto | null;
-  deletePost: (id: number) => void;
+  deletePost: (
+    id: number,
+    onSuccess: (data: { msg: string }) => void,
+  ) => void;
 }) {
+  const router = useRouter();
+
   if (post == null) return <div>로딩중...</div>;
 
   return (
@@ -154,7 +171,10 @@ function PostInfo({
           className="p-2 rounded border"
           onClick={() =>
             confirm(`${post.id}번 글을 정말로 삭제하시겠습니까?`) &&
-            deletePost(post.id)
+            deletePost(post.id, (data) => {
+              alert(data.msg);
+              router.replace("/posts");
+            })
           }
         >
           삭제
@@ -171,9 +191,8 @@ function PostInfo({
 }
 
 export default function Page() {
-  const router = useRouter();
   const { id } = useParams<{ id: string }>();
-  const { post } = usePost(id);
+  const { post, deletePost } = usePost(id);
   const [postComments, setPostComments] = useState<PostCommentDto[] | null>(
     null,
   );
@@ -181,17 +200,6 @@ export default function Page() {
   useEffect(() => {
     apiFetch(`/api/v1/posts/${id}/comments`).then(setPostComments);
   }, [id]);
-
-  const deletePost = (id: number) => {
-    apiFetch(`/api/v1/posts/${id}`, {
-      method: "DELETE",
-    })
-      .then((data) => {
-        alert(data.msg);
-        router.replace("/posts");
-      })
-      .catch((error) => alert(error.msg ?? "글 삭제에 실패했습니다."));
-  };
 
   return (
     <>
