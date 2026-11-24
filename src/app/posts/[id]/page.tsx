@@ -186,7 +186,12 @@ function PostCommentListItem({
   comment: PostCommentDto;
   postCommentsState: ReturnType<typeof usePostComments>;
 }) {
+  const [modifyMode, setModifyMode] = useState(false);
   const { deleteComment: _deleteComment } = postCommentsState;
+
+  const toggleModifyMode = () => {
+    setModifyMode(!modifyMode);
+  };
 
   const deleteComment = () => {
     if (!confirm(`${comment.id}번 댓글을 정말로 삭제하시겠습니까?`)) return;
@@ -196,9 +201,13 @@ function PostCommentListItem({
 
   return (
     <li className="flex gap-2 items-start">
-      <span style={{ whiteSpace: "pre-line" }}>
-        {comment.id} : {comment.content}
-      </span>
+      <span>{comment.id} :</span>
+      {!modifyMode && (
+        <span style={{ whiteSpace: "pre-line" }}>{comment.content}</span>
+      )}
+      <button className="px-2 rounded border" onClick={toggleModifyMode}>
+        {modifyMode ? "수정취소" : "수정"}
+      </button>
       <button className="px-2 rounded border" onClick={deleteComment}>
         삭제
       </button>
