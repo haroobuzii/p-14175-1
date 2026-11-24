@@ -6,30 +6,17 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function Page() {
-  const router = useRouter();
-  const { id } = useParams<{ id: string }>();
-  const [post, setPost] = useState<PostWithContentDto | null>(null);
-  const [postComments, setPostComments] = useState<PostCommentDto[] | null>(
-    null,
-  );
-
-  useEffect(() => {
-    apiFetch(`/api/v1/posts/${id}`).then(setPost);
-    apiFetch(`/api/v1/posts/${id}/comments`).then(setPostComments);
-  }, [id]);
-
-  const deletePost = (id: number) => {
-    apiFetch(`/api/v1/posts/${id}`, {
-      method: "DELETE",
-    })
-      .then((data) => {
-        alert(data.msg);
-        router.replace("/posts");
-      })
-      .catch((error) => alert(error.msg ?? "글 삭제에 실패했습니다."));
-  };
-
+function PostCommentWriteAndList({
+  id,
+  postComments,
+  setPostComments,
+}: {
+  id: string;
+  postComments: PostCommentDto[] | null;
+  setPostComments: React.Dispatch<
+    React.SetStateAction<PostCommentDto[] | null>
+  >;
+}) {
   const deleteComment = (commentId: number) => {
     apiFetch(`/api/v1/posts/${id}/comments/${commentId}`, {
       method: "DELETE",
@@ -81,36 +68,8 @@ export default function Page() {
       .catch((error) => alert(error.msg ?? "댓글 작성에 실패했습니다."));
   };
 
-  if (post == null) return <div>로딩중...</div>;
-
   return (
     <>
-      <h1>글 상세페이지</h1>
-
-      <div>번호 : {post.id}</div>
-      <div>작성일 : {new Date(post.createDate).toLocaleString()}</div>
-      <div>수정일 : {new Date(post.modifyDate).toLocaleString()}</div>
-      <div>제목 : {post.title}</div>
-      <div style={{ whiteSpace: "pre-line" }}>{post.content}</div>
-
-      <div className="flex gap-2">
-        <button
-          className="p-2 rounded border"
-          onClick={() =>
-            confirm(`${post.id}번 글을 정말로 삭제하시겠습니까?`) &&
-            deletePost(post.id)
-          }
-        >
-          삭제
-        </button>
-        <Link href={`/posts/${post.id}/edit`} className="p-2 rounded border">
-          수정
-        </Link>
-        <Link href="/posts" className="p-2 rounded border">
-          목록
-        </Link>
-      </div>
-
       <h2>댓글 작성</h2>
 
       <form
@@ -157,6 +116,71 @@ export default function Page() {
           ))}
         </ul>
       )}
+    </>
+  );
+}
+
+export default function Page() {
+  const router = useRouter();
+  const { id } = useParams<{ id: string }>();
+  const [post, setPost] = useState<PostWithContentDto | null>(null);
+  const [postComments, setPostComments] = useState<PostCommentDto[] | null>(
+    null,
+  );
+
+  useEffect(() => {
+    apiFetch(`/api/v1/posts/${id}`).then(setPost);
+    apiFetch(`/api/v1/posts/${id}/comments`).then(setPostComments);
+  }, [id]);
+
+  const deletePost = (id: number) => {
+    apiFetch(`/api/v1/posts/${id}`, {
+      method: "DELETE",
+    })
+      .then((data) => {
+        alert(data.msg);
+        router.replace("/posts");
+      })
+      .catch((error) => alert(error.msg ?? "글 삭제에 실패했습니다."));
+  };
+
+  if (post == null) return <div>로딩중...</div>;
+
+  return (
+    <>
+      <h1>글 상세페이지</h1>
+
+      <div>번호 : {post.id}</div>
+      <div>작성일 : {new Date(post.createDate).toLocaleString()}</div>
+      <div>수정일 : {new Date(post.modifyDate).toLocaleString()}</div>
+      <div>제목 : {post.title}</div>
+      <div style={{ whiteSpace: "pre-line" }}>{post.content}</div>
+
+      <div className="flex gap-2">
+        <button
+          className="p-2 rounded border"
+          onClick={() =>
+            confirm(`${post.id}번 글을 정말로 삭제하시겠습니까?`) &&
+            deletePost(post.id)
+          }
+        >
+          삭제
+        </button>
+        <Link href={`/posts/${post.id}/edit`} className="p-2 rounded border">
+          수정
+        </Link>
+        <Link href="/posts" className="p-2 rounded border">
+          목록
+        </Link>
+      </div>
+
+      <hr className="my-2" />
+
+      <PostCommentWriteAndList
+        id={id}
+        postComments={postComments}
+        setPostComments={setPostComments}
+      />
     </>
   );
 }
