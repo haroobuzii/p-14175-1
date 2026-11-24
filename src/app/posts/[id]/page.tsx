@@ -179,22 +179,39 @@ function PostCommentWrite({
   );
 }
 
+function PostCommentListItem({
+  comment,
+  postCommentsState,
+}: {
+  comment: PostCommentDto;
+  postCommentsState: ReturnType<typeof usePostComments>;
+}) {
+  const { deleteComment: _deleteComment } = postCommentsState;
+
+  const deleteComment = () => {
+    if (!confirm(`${comment.id}번 댓글을 정말로 삭제하시겠습니까?`)) return;
+
+    _deleteComment(comment.id, (data) => alert(data.msg));
+  };
+
+  return (
+    <li className="flex gap-2 items-start">
+      <span style={{ whiteSpace: "pre-line" }}>
+        {comment.id} : {comment.content}
+      </span>
+      <button className="px-2 rounded border" onClick={deleteComment}>
+        삭제
+      </button>
+    </li>
+  );
+}
+
 function PostCommentList({
   postCommentsState,
 }: {
   postCommentsState: ReturnType<typeof usePostComments>;
 }) {
-  const {
-    postId,
-    postComments,
-    deleteComment: _deleteComment,
-  } = postCommentsState;
-
-  const deleteComment = (commentId: number) => {
-    if (!confirm(`${commentId}번 댓글을 정말로 삭제하시겠습니까?`)) return;
-
-    _deleteComment(commentId, (data) => alert(data.msg));
-  };
+  const { postId, postComments } = postCommentsState;
 
   return (
     <>
@@ -209,17 +226,11 @@ function PostCommentList({
       {postComments != null && postComments.length > 0 && (
         <ul>
           {postComments.map((comment) => (
-            <li key={comment.id} className="flex gap-2 items-start">
-              <span style={{ whiteSpace: "pre-line" }}>
-                {comment.id} : {comment.content}
-              </span>
-              <button
-                className="px-2 rounded border"
-                onClick={() => deleteComment(comment.id)}
-              >
-                삭제
-              </button>
-            </li>
+            <PostCommentListItem
+              key={comment.id}
+              comment={comment}
+              postCommentsState={postCommentsState}
+            />
           ))}
         </ul>
       )}
