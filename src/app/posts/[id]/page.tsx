@@ -27,20 +27,20 @@ function usePost(id: number) {
   };
 }
 
-function usePostComments(id: number) {
+function usePostComments(postId: number) {
   const [postComments, setPostComments] = useState<PostCommentDto[] | null>(
     null,
   );
 
   useEffect(() => {
-    apiFetch(`/api/v1/posts/${id}/comments`).then(setPostComments);
-  }, [id]);
+    apiFetch(`/api/v1/posts/${postId}/comments`).then(setPostComments);
+  }, [postId]);
 
   const deleteComment = (
     commentId: number,
     onSuccess: (data: { msg: string }) => void,
   ) => {
-    apiFetch(`/api/v1/posts/${id}/comments/${commentId}`, {
+    apiFetch(`/api/v1/posts/${postId}/comments/${commentId}`, {
       method: "DELETE",
     })
       .then((data) => {
@@ -57,7 +57,7 @@ function usePostComments(id: number) {
     content: string,
     onSuccess: (data: { msg: string }) => void,
   ) => {
-    apiFetch(`/api/v1/posts/${id}/comments`, {
+    apiFetch(`/api/v1/posts/${postId}/comments`, {
       method: "POST",
       body: JSON.stringify({
         content,
@@ -72,7 +72,7 @@ function usePostComments(id: number) {
   };
 
   return {
-    id,
+    postId,
     postComments,
     deleteComment,
     writeComment,
@@ -126,7 +126,7 @@ function PostCommentWrite({
 }: {
   postCommentsState: ReturnType<typeof usePostComments>;
 }) {
-  const { id, writeComment } = postCommentsState;
+  const { postId, writeComment } = postCommentsState;
 
   const handleCommentWriteSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -158,7 +158,7 @@ function PostCommentWrite({
 
   return (
     <>
-      <h2>{id}번 글에 대한 댓글 작성</h2>
+      <h2>{postId}번 글에 대한 댓글 작성</h2>
 
       <form
         className="flex flex-col gap-2 p-2"
@@ -185,7 +185,7 @@ function PostCommentList({
   postCommentsState: ReturnType<typeof usePostComments>;
 }) {
   const {
-    id,
+    postId,
     postComments,
     deleteComment: _deleteComment,
   } = postCommentsState;
@@ -198,7 +198,7 @@ function PostCommentList({
 
   return (
     <>
-      <h2>{id}번 글에 대한 댓글 목록</h2>
+      <h2>{postId}번 글에 대한 댓글 목록</h2>
 
       {postComments == null && <div>댓글 로딩중...</div>}
 
