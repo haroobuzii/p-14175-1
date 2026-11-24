@@ -199,11 +199,34 @@ function PostCommentListItem({
     _deleteComment(comment.id, (data) => alert(data.msg));
   };
 
+  const handleCommentModifySubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
+
   return (
     <li className="flex gap-2 items-start">
       <span>{comment.id} :</span>
       {!modifyMode && (
         <span style={{ whiteSpace: "pre-line" }}>{comment.content}</span>
+      )}
+      {modifyMode && (
+        <form
+          className="flex gap-2 items-start"
+          onSubmit={handleCommentModifySubmit}
+        >
+          <textarea
+            className="border p-2 rounded"
+            name="content"
+            placeholder="댓글 내용"
+            maxLength={100}
+            rows={3}
+            defaultValue={comment.content}
+            autoFocus
+          />
+          <button className="px-2 rounded border" type="submit">
+            저장
+          </button>
+        </form>
       )}
       <button className="px-2 rounded border" onClick={toggleModifyMode}>
         {modifyMode ? "수정취소" : "수정"}
