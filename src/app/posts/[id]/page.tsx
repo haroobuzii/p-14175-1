@@ -132,7 +132,10 @@ function PostInfo({
       <div style={{ whiteSpace: "pre-line" }}>{post.content}</div>
 
       <div className="flex gap-2">
-        <button className="p-2 rounded border" onClick={deletePost}>
+        <button
+          className="p-2 rounded border cursor-pointer"
+          onClick={deletePost}
+        >
           삭제
         </button>
         <Link href={`/posts/${post.id}/edit`} className="p-2 rounded border">
@@ -196,7 +199,7 @@ function PostCommentWrite({
           maxLength={100}
           rows={3}
         />
-        <button className="border p-2 rounded" type="submit">
+        <button className="border p-2 rounded cursor-pointer" type="submit">
           작성
         </button>
       </form>
@@ -254,7 +257,7 @@ function PostCommentListItem({
 
   return (
     <li className="flex gap-2 items-start">
-      <span>{comment.id} :</span>
+      <span className="shrink-0">{comment.id} :</span>
       {!modifyMode && (
         <span style={{ whiteSpace: "pre-line" }}>{comment.content}</span>
       )}
@@ -272,15 +275,21 @@ function PostCommentListItem({
             defaultValue={comment.content}
             autoFocus
           />
-          <button className="px-2 rounded border" type="submit">
+          <button className="px-2 rounded border cursor-pointer" type="submit">
             저장
           </button>
         </form>
       )}
-      <button className="px-2 rounded border" onClick={toggleModifyMode}>
+      <button
+        className="px-2 rounded border cursor-pointer"
+        onClick={toggleModifyMode}
+      >
         {modifyMode ? "수정취소" : "수정"}
       </button>
-      <button className="px-2 rounded border" onClick={deleteComment}>
+      <button
+        className="px-2 rounded border cursor-pointer"
+        onClick={deleteComment}
+      >
         삭제
       </button>
     </li>
@@ -305,7 +314,7 @@ function PostCommentList({
       )}
 
       {postComments != null && postComments.length > 0 && (
-        <ul>
+        <ul className="mt-2 flex flex-col gap-2">
           {postComments.map((comment) => (
             <PostCommentListItem
               key={comment.id}
