@@ -13,10 +13,7 @@ function usePost(id: number) {
     apiFetch(`/api/v1/posts/${id}`).then(setPost);
   }, [id]);
 
-  const deletePost = (
-    id: number,
-    onSuccess: (data: { msg: string }) => void,
-  ) => {
+  const deletePost = (onSuccess: (data: { msg: string }) => void) => {
     apiFetch(`/api/v1/posts/${id}`, {
       method: "DELETE",
     })
@@ -40,7 +37,6 @@ function usePostComments(id: number) {
   }, [id]);
 
   const deleteComment = (
-    id: number,
     commentId: number,
     onSuccess: (data: { msg: string }) => void,
   ) => {
@@ -58,7 +54,6 @@ function usePostComments(id: number) {
   };
 
   const writeComment = (
-    id: number,
     content: string,
     onSuccess: (data: { msg: string }) => void,
   ) => {
@@ -96,7 +91,7 @@ function PostInfo({
   const deletePost = () => {
     if (!confirm(`${post.id}번 글을 정말로 삭제하시겠습니까?`)) return;
 
-    _deletePost(post.id, (data) => {
+    _deletePost((data) => {
       alert(data.msg);
       router.replace("/posts");
     });
@@ -156,7 +151,7 @@ function PostCommentWrite({
       return;
     }
 
-    writeComment(id, contentTextarea.value, (data) => {
+    writeComment(contentTextarea.value, (data) => {
       alert(data.msg);
       contentTextarea.value = "";
     });
@@ -197,7 +192,7 @@ function PostCommentList({
   const deleteComment = (commentId: number) => {
     if (!confirm(`${commentId}번 댓글을 정말로 삭제하시겠습니까?`)) return;
 
-    _deleteComment(id, commentId, (data) => alert(data.msg));
+    _deleteComment(commentId, (data) => alert(data.msg));
   };
 
   return (
