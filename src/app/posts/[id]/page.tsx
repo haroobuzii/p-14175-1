@@ -120,6 +120,44 @@ function PostCommentWriteAndList({
   );
 }
 
+function PostInfo({
+  post,
+  deletePost,
+}: {
+  post: PostWithContentDto | null;
+  deletePost: (id: number) => void;
+}) {
+  if (post == null) return <div>로딩중...</div>;
+
+  return (
+    <>
+      <div>번호 : {post.id}</div>
+      <div>작성일 : {new Date(post.createDate).toLocaleString()}</div>
+      <div>수정일 : {new Date(post.modifyDate).toLocaleString()}</div>
+      <div>제목 : {post.title}</div>
+      <div style={{ whiteSpace: "pre-line" }}>{post.content}</div>
+
+      <div className="flex gap-2">
+        <button
+          className="p-2 rounded border"
+          onClick={() =>
+            confirm(`${post.id}번 글을 정말로 삭제하시겠습니까?`) &&
+            deletePost(post.id)
+          }
+        >
+          삭제
+        </button>
+        <Link href={`/posts/${post.id}/edit`} className="p-2 rounded border">
+          수정
+        </Link>
+        <Link href="/posts" className="p-2 rounded border">
+          목록
+        </Link>
+      </div>
+    </>
+  );
+}
+
 export default function Page() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
@@ -144,35 +182,11 @@ export default function Page() {
       .catch((error) => alert(error.msg ?? "글 삭제에 실패했습니다."));
   };
 
-  if (post == null) return <div>로딩중...</div>;
-
   return (
     <>
       <h1>글 상세페이지</h1>
 
-      <div>번호 : {post.id}</div>
-      <div>작성일 : {new Date(post.createDate).toLocaleString()}</div>
-      <div>수정일 : {new Date(post.modifyDate).toLocaleString()}</div>
-      <div>제목 : {post.title}</div>
-      <div style={{ whiteSpace: "pre-line" }}>{post.content}</div>
-
-      <div className="flex gap-2">
-        <button
-          className="p-2 rounded border"
-          onClick={() =>
-            confirm(`${post.id}번 글을 정말로 삭제하시겠습니까?`) &&
-            deletePost(post.id)
-          }
-        >
-          삭제
-        </button>
-        <Link href={`/posts/${post.id}/edit`} className="p-2 rounded border">
-          수정
-        </Link>
-        <Link href="/posts" className="p-2 rounded border">
-          목록
-        </Link>
-      </div>
+      <PostInfo post={post} deletePost={deletePost} />
 
       <hr className="my-2" />
 
