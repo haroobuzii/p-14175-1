@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-function usePost(id: string) {
+function usePost(id: number) {
   const [post, setPost] = useState<PostWithContentDto | null>(null);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ function usePost(id: string) {
   };
 }
 
-function usePostComments(id: string) {
+function usePostComments(id: number) {
   const [postComments, setPostComments] = useState<PostCommentDto[] | null>(
     null,
   );
@@ -40,7 +40,7 @@ function usePostComments(id: string) {
   }, [id]);
 
   const deleteComment = (
-    id: string,
+    id: number,
     commentId: number,
     onSuccess: (data: { msg: string }) => void,
   ) => {
@@ -58,7 +58,7 @@ function usePostComments(id: string) {
   };
 
   const writeComment = (
-    id: string,
+    id: number,
     content: string,
     onSuccess: (data: { msg: string }) => void,
   ) => {
@@ -135,15 +135,15 @@ function PostCommentWriteAndList({
   deleteComment,
   writeComment,
 }: {
-  id: string;
+  id: number;
   postComments: PostCommentDto[] | null;
   deleteComment: (
-    id: string,
+    id: number,
     commentId: number,
     onSuccess: (data: { msg: string }) => void,
   ) => void;
   writeComment: (
-    id: string,
+    id: number,
     content: string,
     onSuccess: (data: { msg: string }) => void,
   ) => void;
@@ -229,7 +229,8 @@ function PostCommentWriteAndList({
 }
 
 export default function Page() {
-  const { id } = useParams<{ id: string }>();
+  const { id: idStr } = useParams<{ id: string }>();
+  const id = Number(idStr);
   const { post, deletePost } = usePost(id);
   const { postComments, deleteComment, writeComment } = usePostComments(id);
 
