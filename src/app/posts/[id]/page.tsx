@@ -82,7 +82,16 @@ function usePostComments(postId: number) {
         content,
       }),
     })
-      .then(onSuccess)
+      .then((data) => {
+        setPostComments(
+          (prev) =>
+            prev?.map((comment) =>
+              comment.id == commentId ? { ...comment, content } : comment,
+            ) ?? null,
+        );
+
+        onSuccess(data);
+      })
       .catch((error) => alert(error.msg ?? "댓글 수정에 실패했습니다."));
   };
 
