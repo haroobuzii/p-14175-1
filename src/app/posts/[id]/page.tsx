@@ -71,11 +71,27 @@ function usePostComments(postId: number) {
       .catch((error) => alert(error.msg ?? "댓글 작성에 실패했습니다."));
   };
 
+  const modifyComment = (
+    commentId: number,
+    content: string,
+    onSuccess: (data: { msg: string }) => void,
+  ) => {
+    apiFetch(`/api/v1/posts/${postId}/comments/${commentId}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        content,
+      }),
+    })
+      .then(onSuccess)
+      .catch((error) => alert(error.msg ?? "댓글 수정에 실패했습니다."));
+  };
+
   return {
     postId,
     postComments,
     deleteComment,
     writeComment,
+    modifyComment,
   };
 }
 
@@ -187,7 +203,7 @@ function PostCommentListItem({
   postCommentsState: ReturnType<typeof usePostComments>;
 }) {
   const [modifyMode, setModifyMode] = useState(false);
-  const { deleteComment: _deleteComment } = postCommentsState;
+  const { deleteComment: _deleteComment, modifyComment } = postCommentsState;
 
   const toggleModifyMode = () => {
     setModifyMode(!modifyMode);
@@ -201,6 +217,30 @@ function PostCommentListItem({
 
   const handleCommentModifySubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const form = e.currentTarget;
+    const contentTextarea = form.elements.namedItem(
+      "content",
+    ) as HTMLTextAreaElement;
+
+    contentTextarea.value = contentTextarea.value.trim();
+
+    if (contentTextarea.value.length == 0) {
+      alert("댓글 내용을 입력해주세요.");
+      contentTextarea.focus();
+      return;
+    }
+
+    if (contentTextarea.value.length < 2) {
+      alert("댓글 내용을 2자 이상 입력해주세요.");
+      contentTextarea.focus();
+      return;
+    }
+
+    modifyComment(comment.id, contentTextarea.value, (data) => {
+      alert(data.msg);
+      toggleModifyMode();
+    });
   };
 
   return (
