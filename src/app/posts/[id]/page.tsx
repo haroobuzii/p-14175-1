@@ -185,7 +185,7 @@ function PostCommentWrite({
   );
 }
 
-function PostCommentWriteAndList({
+function PostCommentList({
   id,
   postCommentsState,
 }: {
@@ -202,8 +202,6 @@ function PostCommentWriteAndList({
 
   return (
     <>
-      <PostCommentWrite id={id} postCommentsState={postCommentsState} />
-
       <h2>댓글 목록</h2>
 
       {postComments == null && <div>댓글 로딩중...</div>}
@@ -229,6 +227,24 @@ function PostCommentWriteAndList({
           ))}
         </ul>
       )}
+    </>
+  );
+}
+
+function PostCommentWriteAndList({
+  id,
+  postCommentsState,
+}: {
+  id: number;
+  postCommentsState: ReturnType<typeof usePostComments>;
+}) {
+  return (
+    <>
+      <PostCommentWrite id={id} postCommentsState={postCommentsState} />
+
+      <hr className="my-2" />
+
+      <PostCommentList id={id} postCommentsState={postCommentsState} />
     </>
   );
 }
