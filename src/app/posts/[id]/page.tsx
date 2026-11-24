@@ -6,6 +6,18 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+function usePost(id: string) {
+  const [post, setPost] = useState<PostWithContentDto | null>(null);
+
+  useEffect(() => {
+    apiFetch(`/api/v1/posts/${id}`).then(setPost);
+  }, [id]);
+
+  return {
+    post,
+  };
+}
+
 function PostCommentWriteAndList({
   id,
   postComments,
@@ -161,13 +173,12 @@ function PostInfo({
 export default function Page() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
-  const [post, setPost] = useState<PostWithContentDto | null>(null);
+  const { post } = usePost(id);
   const [postComments, setPostComments] = useState<PostCommentDto[] | null>(
     null,
   );
 
   useEffect(() => {
-    apiFetch(`/api/v1/posts/${id}`).then(setPost);
     apiFetch(`/api/v1/posts/${id}/comments`).then(setPostComments);
   }, [id]);
 
