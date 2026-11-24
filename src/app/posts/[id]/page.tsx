@@ -84,16 +84,18 @@ function usePostComments(id: number) {
 }
 
 function PostInfo({
-  post,
-  deletePost,
+  postState,
 }: {
-  post: PostWithContentDto | null;
-  deletePost: (
-    id: number,
-    onSuccess: (data: { msg: string }) => void,
-  ) => void;
+  postState: {
+    post: PostWithContentDto | null;
+    deletePost: (
+      id: number,
+      onSuccess: (data: { msg: string }) => void,
+    ) => void;
+  };
 }) {
   const router = useRouter();
+  const { post, deletePost } = postState;
 
   if (post == null) return <div>로딩중...</div>;
 
@@ -131,23 +133,25 @@ function PostInfo({
 
 function PostCommentWriteAndList({
   id,
-  postComments,
-  deleteComment,
-  writeComment,
+  postCommentsState,
 }: {
   id: number;
-  postComments: PostCommentDto[] | null;
-  deleteComment: (
-    id: number,
-    commentId: number,
-    onSuccess: (data: { msg: string }) => void,
-  ) => void;
-  writeComment: (
-    id: number,
-    content: string,
-    onSuccess: (data: { msg: string }) => void,
-  ) => void;
+  postCommentsState: {
+    postComments: PostCommentDto[] | null;
+    deleteComment: (
+      id: number,
+      commentId: number,
+      onSuccess: (data: { msg: string }) => void,
+    ) => void;
+    writeComment: (
+      id: number,
+      content: string,
+      onSuccess: (data: { msg: string }) => void,
+    ) => void;
+  };
 }) {
+  const { postComments, deleteComment, writeComment } = postCommentsState;
+
   const handleCommentWriteSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -231,23 +235,18 @@ function PostCommentWriteAndList({
 export default function Page() {
   const { id: idStr } = useParams<{ id: string }>();
   const id = Number(idStr);
-  const { post, deletePost } = usePost(id);
-  const { postComments, deleteComment, writeComment } = usePostComments(id);
+  const postState = usePost(id);
+  const postCommentsState = usePostComments(id);
 
   return (
     <>
       <h1>글 상세페이지</h1>
 
-      <PostInfo post={post} deletePost={deletePost} />
+      <PostInfo postState={postState} />
 
       <hr className="my-2" />
 
-      <PostCommentWriteAndList
-        id={id}
-        postComments={postComments}
-        deleteComment={deleteComment}
-        writeComment={writeComment}
-      />
+      <PostCommentWriteAndList id={id} postCommentsState={postCommentsState} />
     </>
   );
 }
